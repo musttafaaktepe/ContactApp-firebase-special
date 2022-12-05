@@ -4,10 +4,13 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PrivateRouter from "./router/PrivateRouter";
 import Home from "./pages/Home";
+import { Provider } from "react-redux";
+import store from "./redux/app/store";
+
 
 function App() {
   return (
-    <div>
+    <Provider store={store} >
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -15,7 +18,7 @@ function App() {
           <Route path="" element={<Home />} />
         </Route>
       </Routes>
-    </div>
+    </Provider>
   );
 }
 
