@@ -23,6 +23,9 @@ import { useState } from "react";
 import { loginInfos } from "../redux/features/loginInfoSlice";
 import { loginSuccess } from "../redux/features/loginInfoSlice";
 
+import { GoogleAuthProvider } from "firebase/auth";
+import { signInWithPopup } from "firebase/auth";
+
 const Login = () => {
   const navigate = useNavigate();
   const dispatch=useDispatch();
@@ -32,7 +35,9 @@ const Login = () => {
 
 
   const loginInfo = useSelector((state)=>state.loginInfo)
-  const {loginInformation, email, password} = loginInfo
+  const {email:emailadres, password} = loginInfo
+
+  const providerGoogle = new GoogleAuthProvider();
 
   const Copyright = (props) => {
     return (
@@ -57,7 +62,7 @@ const Login = () => {
   const handleSubmit =  async(event) => {
     event.preventDefault();
     const reg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (email.match(reg)) {
+    if (emailadres.match(reg)) {
       setEmailError(false);
     } else {
       setEmailError(true);
@@ -73,8 +78,11 @@ const Login = () => {
 
     if(!emailError && !passwordError){
       try {
-        const user = await signInWithEmailAndPassword(auth, email, password)
-        dispatch(loginSuccess({...loginInfo, userInfo:user}))
+        const  {user} = await signInWithEmailAndPassword(auth, emailadres, password)
+        const {email, displayName} = user
+
+        dispatch(loginSuccess({...loginInfo, userInfo:{displayName}, email:email}))
+        console.log(user);
         navigate("/home")
         alert("successfuly login")
       } catch (error) {
@@ -85,6 +93,20 @@ const Login = () => {
     }
     
   };
+
+  const signInWithGoogle =()=>{
+    signInWithPopup(auth, providerGoogle)
+     .then ((result)=> {
+      const {email, displayName, photoURL} = result.user
+      
+      
+      dispatch(loginSuccess({...loginInfo, userInfo:{displayName, photoURL}, email:email }))
+      navigate("/home")
+      alert("successfully login")
+     })
+
+  }
+
 console.log(loginInfo);
   return (
     <ThemeProvider theme={theme}>
@@ -165,6 +187,7 @@ console.log(loginInfo);
                   textTransform: "initial",
                 }}
                 variant="contained"
+                onClick={signInWithGoogle}
               >
                 <GoogleIcon color="currentColor" />
                 Continue with Google

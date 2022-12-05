@@ -3,7 +3,7 @@ import {getAuth} from "firebase/auth";
 const firebaseConfig = {
 
   
-
+ 
 
 
   };
