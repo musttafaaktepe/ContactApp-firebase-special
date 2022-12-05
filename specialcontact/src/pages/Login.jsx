@@ -14,9 +14,25 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import GoogleIcon from "../assets/GoogleIcon";
 import { useNavigate } from "react-router-dom";
+import { auth } from "../authentication/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useState } from "react";
+
+import { loginInfos } from "../redux/features/loginInfoSlice";
+import { loginSuccess } from "../redux/features/loginInfoSlice";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch=useDispatch();
+
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+
+
+  const loginInfo = useSelector((state)=>state.loginInfo)
+  const {loginInformation, email, password} = loginInfo
 
   const Copyright = (props) => {
     return (
@@ -38,15 +54,38 @@ const Login = () => {
 
   const theme = createTheme();
 
-  const handleSubmit = (event) => {
+  const handleSubmit =  async(event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
-  };
+    const reg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email.match(reg)) {
+      setEmailError(false);
+    } else {
+      setEmailError(true);
+      alert("ınvalid email");
+    }
 
+    if (password.toString().length < 6) {
+      setPasswordError(true);
+      alert("min 6 ch");
+    } else {
+      setPasswordError(false);
+    }
+
+    if(!emailError && !passwordError){
+      try {
+        const user = await signInWithEmailAndPassword(auth, email, password)
+        dispatch(loginSuccess({...loginInfo, userInfo:user}))
+        navigate("/home")
+        alert("successfuly login")
+      } catch (error) {
+        console.log(error.message);
+        alert("user not found")
+        
+      }
+    }
+    
+  };
+console.log(loginInfo);
   return (
     <ThemeProvider theme={theme}>
       <Grid container component="main" sx={{ height: "100vh" }}>
@@ -93,6 +132,7 @@ const Login = () => {
                 name="email"
                 autoComplete="email"
                 autoFocus
+                onChange={(e)=>{dispatch(loginInfos({...loginInfo, email:e.currentTarget.value}))}}
               />
               <TextField
                 margin="normal"
@@ -103,6 +143,7 @@ const Login = () => {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                onChange={(e)=>{dispatch(loginInfos({...loginInfo, password:e.currentTarget.value}))}}
               />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}

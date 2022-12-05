@@ -17,7 +17,10 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { updateProfile } from "firebase/auth";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { registerInformation } from "../redux/features/registerSlice";
+import {
+  afterRegister,
+  registerInformation,
+} from "../redux/features/registerSlice";
 import { useState } from "react";
 
 const Register = () => {
@@ -55,7 +58,7 @@ const Register = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const reg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const reg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (email.match(reg)) {
       setEmailError(false);
     } else {
@@ -69,20 +72,24 @@ const Register = () => {
     } else {
       setPasswordError(false);
     }
-    if(!emailError && !passwordError){
-      try{
-      const user = await createUserWithEmailAndPassword(auth, email, password);
-      console.log(auth.currentUser,);
-      await updateProfile(auth.currentUser,{
-        displayName:`${firstName} ${lastName}`
+    if (!emailError && !passwordError) {
+      try {
+        const user = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        console.log(auth.currentUser);
+        await updateProfile(auth.currentUser, {
+          displayName: `${firstName} ${lastName}`,
+        });
+        alert("signup");
+        dispatch(afterRegister());
+        navigate("/");
+      } catch (error) {
+        alert(error.message);
       }
-        
-        )
-    }catch(error){
-      alert(error.message)
     }
-    }
-
   };
 
   console.log(firstName, lastName, email, password);

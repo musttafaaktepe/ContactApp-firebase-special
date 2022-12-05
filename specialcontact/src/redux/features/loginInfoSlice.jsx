@@ -3,17 +3,23 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialStates = {
     loginInformation:false,
     email:"",
-    password:false
+    password:false,
+    userInfo:{}
 };
 
 const loginSlice = createSlice({
     name:"loginInfo",
     initialState:initialStates,
     reducers:{
-        loginSuccess:(state,action)=>{
-            state.loginInformation=true;
-            state.email=action.payload.firstName;
+        loginInfos:(state,action)=>{
+            
+            state.email=action.payload.email;
             state.password=action.payload.password;
+        },
+        loginSuccess:(state, action)=>{
+            state.loginInformation=true
+            state.userInfo=action.payload.userInfo
+            delete state.password
         },
         loginUnsuccess:(state)=>{
             state=initialStates;
@@ -21,6 +27,6 @@ const loginSlice = createSlice({
     }
 })
 
-export const {loginSuccess, loginUnsuccess} = loginSlice.actions;
+export const {loginInfos, loginSuccess, loginUnsuccess} = loginSlice.actions;
 export default loginSlice.reducer
 

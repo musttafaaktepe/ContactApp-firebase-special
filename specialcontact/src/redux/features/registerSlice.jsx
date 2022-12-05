@@ -19,8 +19,8 @@ const registerSlice = createSlice({
             state.email=action.payload.email;
             state.password=action.payload.password;            
         },
-        afterRegister:(state,action) => {
-            state=initialStates;
+        afterRegister:(state) => {
+           delete state.password;
         }
         
     }
