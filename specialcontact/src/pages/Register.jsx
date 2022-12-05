@@ -17,13 +17,21 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { updateProfile } from "firebase/auth";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import { registerInformation } from "../redux/features/registerSlice";
+import { useState } from "react";
 
 const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
-  const {firstName} = useSelector((state) => state.registerInfo)
 
+  const registerInfo = useSelector((state) => state.registerInfo);
+
+  const { firstName, lastName, email, password } = useSelector(
+    (state) => state.registerInfo
+  );
+
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
   function Copyright(props) {
     return (
@@ -45,15 +53,39 @@ const Register = () => {
 
   const theme = createTheme();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    const reg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (email.match(reg)) {
+      setEmailError(false);
+    } else {
+      setEmailError(true);
+      alert("ınvalid email");
+    }
+
+    if (password.toString().length < 6) {
+      setPasswordError(true);
+      alert("min 6 ch");
+    } else {
+      setPasswordError(false);
+    }
+    if(!emailError && !passwordError){
+      try{
+      const user = await createUserWithEmailAndPassword(auth, email, password);
+      console.log(auth.currentUser,);
+      await updateProfile(auth.currentUser,{
+        displayName:`${firstName} ${lastName}`
+      }
+        
+        )
+    }catch(error){
+      alert(error.message)
+    }
+    }
+
   };
-  console.log(firstName)
+
+  console.log(firstName, lastName, email, password);
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -83,6 +115,14 @@ const Register = () => {
                   id="firstName"
                   label="First Name"
                   autoFocus
+                  onChange={(e) =>
+                    dispatch(
+                      registerInformation({
+                        ...registerInfo,
+                        firstName: e.target.value,
+                      })
+                    )
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -93,6 +133,14 @@ const Register = () => {
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
+                  onChange={(e) =>
+                    dispatch(
+                      registerInformation({
+                        ...registerInfo,
+                        lastName: e.target.value,
+                      })
+                    )
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -103,6 +151,14 @@ const Register = () => {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  onChange={(e) =>
+                    dispatch(
+                      registerInformation({
+                        ...registerInfo,
+                        email: e.target.value,
+                      })
+                    )
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -114,6 +170,14 @@ const Register = () => {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  onChange={(e) =>
+                    dispatch(
+                      registerInformation({
+                        ...registerInfo,
+                        password: e.target.value,
+                      })
+                    )
+                  }
                 />
               </Grid>
               <Grid item xs={12}>
@@ -135,7 +199,11 @@ const Register = () => {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link sx={{ cursor:"pointer" }} variant="body2" onClick={() => navigate("/")}>
+                <Link
+                  sx={{ cursor: "pointer" }}
+                  variant="body2"
+                  onClick={() => navigate("/")}
+                >
                   Already have an account? Sign in
                 </Link>
               </Grid>

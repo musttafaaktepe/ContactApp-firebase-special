@@ -14,10 +14,10 @@ const registerSlice = createSlice({
     reducers:{
         registerInformation:(state,action)=>{
             state.registerInfo = true;
-            state.firstName=action.firstName;
-            state.lastName=action.lastName;
-            state.email=action.email;
-            state.password=action.payload;            
+            state.firstName=action.payload.firstName;
+            state.lastName=action.payload.lastName;
+            state.email=action.payload.email;
+            state.password=action.payload.password;            
         },
         afterRegister:(state,action) => {
             state=initialStates;
