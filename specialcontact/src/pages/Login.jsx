@@ -19,13 +19,10 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
-
 import { loginInfos } from "../redux/features/loginInfoSlice";
 import { loginSuccess } from "../redux/features/loginInfoSlice";
-
 import { GoogleAuthProvider } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
-import { sendPasswordResetEmail } from "firebase/auth";
 import ForgotPassword from "./ForgotPassword";
 
 
