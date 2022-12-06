@@ -82,9 +82,8 @@ const Login = () => {
     if(!emailError && !passwordError){
       try {
         const  {user} = await signInWithEmailAndPassword(auth, emailadres, password)
-        const {email, displayName} = user
-
-        dispatch(loginSuccess({...loginInfo, userInfo:{displayName}, email:email}))
+        const { email, displayName, uid } = user
+        dispatch(loginSuccess({...loginInfo, userInfo:{displayName, uid}, email:email}))
         console.log(user);
         navigate("/home")
         alert("successfuly login")
@@ -100,10 +99,8 @@ const Login = () => {
   const signInWithGoogle =()=>{
     signInWithPopup(auth, providerGoogle)
      .then ((result)=> {
-      const {email, displayName, photoURL} = result.user
-      
-      
-      dispatch(loginSuccess({...loginInfo, userInfo:{displayName, photoURL}, email:email }))
+      const { email, displayName, photoURL, uid } = result.user
+      dispatch(loginSuccess({...loginInfo, userInfo:{displayName, photoURL, uid}, email:email}))
       navigate("/home")
       alert("successfully login")
      })
@@ -199,7 +196,7 @@ console.log(loginInfo);
 
               <Grid container>
                 <Grid item xs>
-                  <Link  variant="body2"  data-bs-toggle="modal" data-bs-target="#forgotPassword" >
+                  <Link sx={{cursor:"pointer"}} variant="body2"  data-bs-toggle="modal" data-bs-target="#forgotPassword" >
                     Forgot password?
                   </Link>
                 </Grid>
