@@ -28,9 +28,7 @@ const Table = () => {
   },[])
 
   console.log(contactList)
-  handleEditButton=()=>{
-    setEditInfos{(name, id, gender, phoneNumber)}
-  }
+  
   return (
     
     <div style={{display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center"}}>
@@ -58,6 +56,9 @@ const Table = () => {
                   }catch(error){
                     console.log(error.message);
                   }
+                }
+                const handleEditButton = () => {
+                  setEditInfos({name, id, gender, phoneNumber})
                 }
 
                 return(

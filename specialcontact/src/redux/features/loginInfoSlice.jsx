@@ -23,12 +23,10 @@ const loginSlice = createSlice({
             delete state.password
         },
 
-        loginUnsuccess:(state)=>{
-            state=initialStates;
-        }
+        logout: () => initialStates
     }
 })
 
-export const {loginInfos, loginSuccess, loginUnsuccess} = loginSlice.actions;
+export const { loginInfos, loginSuccess, logout } = loginSlice.actions;
 export default loginSlice.reducer
 
