@@ -24,6 +24,7 @@ import { loginSuccess } from "../redux/features/loginInfoSlice";
 import { GoogleAuthProvider } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
 import ForgotPassword from "./ForgotPassword";
+import { NotiErr } from "../notifies/ToastifyNotifies";
 
 
 const Login = () => {
@@ -66,6 +67,7 @@ const Login = () => {
       setEmailError(false);
     } else {
       setEmailError(true);
+      NotiErr("invalid email")
       alert("ınvalid email");
     }
 

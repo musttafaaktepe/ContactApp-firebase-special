@@ -6,11 +6,14 @@ import PrivateRouter from "./router/PrivateRouter";
 import Home from "./pages/Home";
 import Appbar from "./components/AppBar";
 import { useSelector } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
+
 
 function App() {
   const { loginInformation } = useSelector((state) => state.loginInfo)
   return (
     <>
+    <ToastContainer />
     {loginInformation && <Appbar />}
     <Routes>
         <Route  path="/" element={<Login />}/>
