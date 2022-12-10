@@ -26,17 +26,15 @@ import { signInWithPopup } from "firebase/auth";
 import ForgotPassword from "./ForgotPassword";
 import { NotiErr } from "../notifies/ToastifyNotifies";
 
-
 const Login = () => {
   const navigate = useNavigate();
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
 
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
 
-
-  const loginInfo = useSelector((state)=>state.loginInfo)
-  const {email:emailadres, password} = loginInfo
+  const loginInfo = useSelector((state) => state.loginInfo);
+  const { email: emailadres, password } = loginInfo;
 
   const providerGoogle = new GoogleAuthProvider();
 
@@ -60,15 +58,14 @@ const Login = () => {
 
   const theme = createTheme();
 
-  const handleSubmit =  async(event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const reg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (emailadres.match(reg)) {
       setEmailError(false);
     } else {
       setEmailError(true);
-      NotiErr("invalid email")
-      alert("ınvalid email");
+      NotiErr("invalid email");
     }
 
     if (password.toString().length < 6) {
@@ -78,142 +75,181 @@ const Login = () => {
       setPasswordError(false);
     }
 
-    if(!emailError && !passwordError){
+    if (!emailError && !passwordError) {
       try {
-        const  {user} = await signInWithEmailAndPassword(auth, emailadres, password)
-        const { email, displayName, uid } = user
-        dispatch(loginSuccess({...loginInfo, userInfo:{displayName, uid}, email:email}))
+        const { user } = await signInWithEmailAndPassword(
+          auth,
+          emailadres,
+          password
+        );
+        const { email, displayName, uid } = user;
+        dispatch(
+          loginSuccess({
+            ...loginInfo,
+            userInfo: { displayName, uid },
+            email: email,
+          })
+        );
         console.log(user);
-        navigate("/home")
-        alert("successfuly login")
+        navigate("/home");
+        alert("successfuly login");
       } catch (error) {
         console.log(error.message);
-        alert("user not found")
-        
+        alert("user not found");
       }
     }
-    
   };
 
-  const signInWithGoogle =()=>{
-    signInWithPopup(auth, providerGoogle)
-     .then ((result)=> {
-      const { email, displayName, photoURL, uid } = result.user
-      dispatch(loginSuccess({...loginInfo, userInfo:{displayName, photoURL, uid}, email:email}))
-      navigate("/home")
-      alert("successfully login")
-     })
+  const signInWithGoogle = () => {
+    signInWithPopup(auth, providerGoogle).then((result) => {
+      const { email, displayName, photoURL, uid } = result.user;
+      dispatch(
+        loginSuccess({
+          ...loginInfo,
+          userInfo: { displayName, photoURL, uid },
+          email: email,
+        })
+      );
+      navigate("/home");
+      alert("successfully login");
+    });
+  };
 
-  }
-
-console.log(loginInfo);
+  console.log(loginInfo);
   return (
     <>
-    <ThemeProvider theme={theme}>
-      <Grid container component="main" sx={{ height: "100vh" }}>
-        <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={7}
-          sx={{
-            backgroundImage: "url(https://source.unsplash.com/random)",
-            backgroundRepeat: "no-repeat",
-            backgroundColor: (t) =>
-              t.palette.mode === "light"
-                ? t.palette.grey[50]
-                : t.palette.grey[900],
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-          <Box
+      <ThemeProvider theme={theme}>
+        <Grid container component="main" sx={{ height: "100vh" }}>
+          <CssBaseline />
+          <Grid
+            item
+            xs={false}
+            sm={4}
+            md={7}
             sx={{
-              my: 8,
-              mx: 4,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
+              backgroundImage: "url(https://source.unsplash.com/random)",
+              backgroundRepeat: "no-repeat",
+              backgroundColor: (t) =>
+                t.palette.mode === "light"
+                  ? t.palette.grey[50]
+                  : t.palette.grey[900],
+              backgroundSize: "cover",
+              backgroundPosition: "center",
             }}
+          />
+          <Grid
+            item
+            xs={12}
+            sm={8}
+            md={5}
+            component={Paper}
+            elevation={6}
+            square
           >
-            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign in
-            </Typography>
-            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                onChange={(e)=>{dispatch(loginInfos({...loginInfo, email:e.currentTarget.value}))}}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                onChange={(e)=>{dispatch(loginInfos({...loginInfo, password:e.currentTarget.value}))}}
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Sign In
-              </Button>
+            <Box
+              sx={{
+                my: 8,
+                mx: 4,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+                <LockOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
+                Sign in
+              </Typography>
+              <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                  onChange={(e) => {
+                    dispatch(
+                      loginInfos({ ...loginInfo, email: e.currentTarget.value })
+                    );
+                  }}
+                />
+                <TextField
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  onChange={(e) => {
+                    dispatch(
+                      loginInfos({
+                        ...loginInfo,
+                        password: e.currentTarget.value,
+                      })
+                    );
+                  }}
+                />
+                <FormControlLabel
+                  control={<Checkbox value="remember" color="primary" />}
+                  label="Remember me"
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Sign In
+                </Button>
 
-              <Button
-                sx={{
-                  marginTop: "1rem",
-                  width: "100%",
-                  textTransform: "initial",
-                }}
-                variant="contained"
-                onClick={signInWithGoogle}
-              >
-                <GoogleIcon color="currentColor" />
-                Continue with Google
-              </Button>
+                <Button
+                  sx={{
+                    marginTop: "1rem",
+                    width: "100%",
+                    textTransform: "initial",
+                  }}
+                  variant="contained"
+                  onClick={signInWithGoogle}
+                >
+                  <GoogleIcon color="currentColor" />
+                  Continue with Google
+                </Button>
 
-              <Grid container>
-                <Grid item xs>
-                  <Link sx={{cursor:"pointer"}} variant="body2"  data-bs-toggle="modal" data-bs-target="#forgotPassword" >
-                    Forgot password?
-                  </Link>
+                <Grid container>
+                  <Grid item xs>
+                    <Link
+                      sx={{ cursor: "pointer" }}
+                      variant="body2"
+                      data-bs-toggle="modal"
+                      data-bs-target="#forgotPassword"
+                    >
+                      Forgot password?
+                    </Link>
+                  </Grid>
+                  <Grid item>
+                    <Link
+                      sx={{ cursor: "pointer" }}
+                      variant="body2"
+                      onClick={() => navigate("/register")}
+                    >
+                      {"Don't have an account? Sign Up"}
+                    </Link>
+                  </Grid>
                 </Grid>
-                <Grid item>
-                  <Link sx={{ cursor:"pointer" }} variant="body2" onClick={() => navigate("/register")}>
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
-              </Grid>
-              <Copyright sx={{ mt: 5 }} />
+                <Copyright sx={{ mt: 5 }} />
+              </Box>
             </Box>
-          </Box>
+          </Grid>
         </Grid>
-      </Grid>
-    </ThemeProvider>
+      </ThemeProvider>
 
-    <ForgotPassword/>
-
+      <ForgotPassword />
     </>
   );
 };
